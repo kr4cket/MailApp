@@ -12,6 +12,7 @@ namespace MailApp
         private AppData _emailData;
         private AppOwner _owner;
         private mailSender _mailUser;
+        private mailGetter _mailGetter;
 
         //Controller initialisation
         public Controller() {
@@ -64,6 +65,7 @@ namespace MailApp
             {
                 _owner = await JsonSerializer.DeserializeAsync<AppOwner>(userFile);
                 _mailUser = new mailSender(_owner);
+                _mailGetter = new mailGetter(_owner.Email, _owner.Password);
             }
             catch
             {
@@ -75,7 +77,6 @@ namespace MailApp
                 userFile.Close();
             }
         }
-
         public async void saveEmail(string emailJson)
         {
             addSavedEmail(emailJson);
@@ -102,6 +103,10 @@ namespace MailApp
         }
         
         //Work with View
+        public async Task<List<string>> getInbox()
+        {
+            return await _mailGetter.openInbox();
+        }
         public string getIncodeUserPassword()
         {
             string incodePassword = "";

@@ -10,4 +10,8 @@
     <Folder Include="Data\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Mail.dll" Version="3.0.22105.1207" />
+  </ItemGroup>
+
 </Project>

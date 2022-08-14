@@ -55,6 +55,14 @@ namespace MailApp
         {
             comboBox1.DataSource = await controller.openEmailFile();
         }
+        private async void GetMessages()
+        {
+            var messages = await controller.getInbox();
+            foreach(string message in messages)
+            {
+                textBox7.Text += message + '\n';
+            }
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -86,7 +94,7 @@ namespace MailApp
 
         private void полученныеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            GetMessages();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -133,6 +141,11 @@ namespace MailApp
                 textBox5.Text = controller.getUserPassword();
             else
                 textBox5.Text = controller.getIncodeUserPassword();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
