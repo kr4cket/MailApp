@@ -1,4 +1,5 @@
 ﻿using Limilabs.Client.IMAP;
+using Limilabs.Mail;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -29,25 +30,37 @@ namespace MailApp
         }
         private async Task<List<long>> _getUids()
         {
-            List<long> uids = await _getter.SearchAsync(Flag.Unseen);
+            List<long> uids = await _getter.SearchAsync(Flag.New);
             return uids;
         }
-        private async Task<List<MessageInfo>> _getMessageList()
+        private List<string> Separator(string text)
         {
-            List<MessageInfo> messages = await _getter.GetMessageInfoByUIDAsync(await _getUids());
+            List<string> Data = new List<string>();
+            text = text.Replace("\'", "");
+            text = text.Replace("Name=", "");
+            Data.AddRange(text.Split(" Address="));
+            return Data;
+        }
+        private async Task<List<Email>> _getMessageList()
+        {
+            List<Email> messages = new List<Email>();
+            List<long> uids = await _getUids();
+            int range = 0;
+            foreach (long uid in uids)
+            {
+                IMail email = new MailBuilder().CreateFromEml(_getter.GetMessageByUID(uid));
+                messages.Add(new Email(email.Subject, email.Text, Separator(email.From.ToString())));
+                if (range == 100)
+                    break;
+                else
+                    range++;
+            }
             return messages;
         }
-        public async Task<List<string>> openInbox()
+        public async Task<List<Email>> openInbox()
         {
             _getter.SelectInbox();
-            List<string> Inbox = new List<string>();
-            var messages = await _getMessageList();
-            foreach (MessageInfo message in messages)
-            {
-                //Inbox.Add($"Subject {message.Envelope.Subject}/ From {message.Envelope.From}/ To {message.Envelope.To}");
-                Inbox.Add($"Subject {message.Envelope.Subject}");
-            }
-            return Inbox;
+            return await _getMessageList();
         }
         
 

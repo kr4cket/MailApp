@@ -11,6 +11,7 @@ namespace MailApp
     {
         private AppData _emailData;
         private AppOwner _owner;
+        private List<Email> _messages;
         private mailSender _mailUser;
         private mailGetter _mailGetter;
 
@@ -105,7 +106,17 @@ namespace MailApp
         //Work with View
         public async Task<List<string>> getInbox()
         {
-            return await _mailGetter.openInbox();
+            List<string> Data = new List<string>();
+            _messages = await _mailGetter.openInbox();
+            foreach(Email message in _messages)
+            {
+                Data.Add($"{message.FromEmail}/{message.FromName}/{message.Subject}");
+            }
+            return Data;
+        }
+        public string getMessage(int index)
+        {
+            return _messages[index].MessageText;
         }
         public string getIncodeUserPassword()
         {
