@@ -30,7 +30,7 @@ namespace MailApp
         }
         private async Task<List<long>> _getUids()
         {
-            List<long> uids = await _getter.SearchAsync(Flag.New);
+            List<long> uids = await _getter.SearchAsync(Flag.All);
             return uids;
         }
         private List<string> Separator(string text)
@@ -50,7 +50,7 @@ namespace MailApp
             {
                 IMail email = new MailBuilder().CreateFromEml(_getter.GetMessageByUID(uid));
                 messages.Add(new Email(email.Subject, email.Text, Separator(email.From.ToString())));
-                if (range == 100)
+                if (range == 20)
                     break;
                 else
                     range++;

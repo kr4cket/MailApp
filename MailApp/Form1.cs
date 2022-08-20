@@ -8,8 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 
 namespace MailApp
 {
@@ -69,17 +71,29 @@ namespace MailApp
         {
             comboBox1.DataSource = await controller.openEmailFile();
         }
+        private void UpdateGrid()
+        {
+            dataGridView1.Columns.Clear();
+            dataGridView1.Rows.Clear();
+            dataGridView1.Columns.Add("", "Электронная почта");
+            dataGridView1.Columns.Add("", "Имя отправителя");
+            dataGridView1.Columns.Add("", "Тема");
+        }
         private async void GetMessages()
         {
             var messages = await controller.getInbox();
-            dataGridView1.Columns.Add("","Электронная почта");
-            dataGridView1.Columns.Add("","Имя отправителя");
-            dataGridView1.Columns.Add("", "Тема");
-            foreach (string message in messages)
+            new Thread(() =>
             {
-                var messageData = message.Split('/');
-                dataGridView1.Rows.Add(messageData[0], messageData[1],messageData[2]);
-            }
+                Invoke((Action)(() =>
+                {
+                    //без Конструкции
+                    foreach (string message in messages)
+                    {
+                        var messageData = message.Split('/');
+                        dataGridView1.Rows.Add(messageData[0], messageData[1], messageData[2]);
+                    }
+                }));
+            }).Start();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -100,6 +114,7 @@ namespace MailApp
             changePage_1(false);
             changePage_2(true);
             chagePage_3(false);
+            UpdateGrid();
             textBox4.Text = controller.getUserEmail();
             textBox5.Text = controller.getIncodeUserPassword();
             textBox6.Text = controller.getUserLogin();
@@ -164,14 +179,14 @@ namespace MailApp
             textBox1.Text = controller.getMessage(e.RowIndex);
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private async void button6_Click(object sender, EventArgs e)
         {
             changePage_1(false);
             changePage_2(false);
             chagePage_3(true);
             chagePage_4(false);
-            //dataGridView1.Rows.Clear();
-            //GetMessages();
+            UpdateGrid();
+            await Task.Run(() => GetMessages());
         }
 
         private void button5_Click(object sender, EventArgs e)
