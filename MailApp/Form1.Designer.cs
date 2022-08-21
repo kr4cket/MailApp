@@ -62,6 +62,7 @@ namespace MailApp
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
+            this.button8 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -294,7 +295,7 @@ namespace MailApp
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(339, 177);
+            this.checkBox2.Location = new System.Drawing.Point(367, 179);
             this.checkBox2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(150, 24);
@@ -316,10 +317,11 @@ namespace MailApp
             // 
             // dataGridView1
             // 
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(198, 43);
+            this.dataGridView1.Location = new System.Drawing.Point(199, 42);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
@@ -373,11 +375,24 @@ namespace MailApp
             this.label10.Text = "Отправитель";
             this.label10.Visible = false;
             // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(549, 548);
+            this.button8.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(118, 31);
+            this.button8.TabIndex = 30;
+            this.button8.Text = "Назад";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Visible = false;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(817, 595);
+            this.Controls.Add(this.button8);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.button6);
@@ -457,6 +472,7 @@ namespace MailApp
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Button button8;
     }
 }
 

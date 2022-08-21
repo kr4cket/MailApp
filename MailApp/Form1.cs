@@ -25,6 +25,9 @@ namespace MailApp
             textBox1.Visible = change;
             textBox2.Visible = change;
             textBox3.Visible = change;
+            textBox1.Text = "";
+            textBox2.Text = "";
+            textBox3.Text = "";
             label1.Visible = change;
             label2.Visible = change;
             label3.Visible = change;
@@ -61,6 +64,7 @@ namespace MailApp
             label2.Visible = change;
             label4.Visible = change;
             button7.Visible = change;
+            button8.Visible = change;
         }
         public Form1()
         {
@@ -111,6 +115,7 @@ namespace MailApp
 
         private void изменитьДанныеToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            chagePage_4(false);
             changePage_1(false);
             changePage_2(true);
             chagePage_3(false);
@@ -207,6 +212,14 @@ namespace MailApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            changePage_1(false);
+            changePage_2(false);
+            chagePage_3(true);
+            chagePage_4(false);
         }
     }
 }
