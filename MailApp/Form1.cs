@@ -11,14 +11,26 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+//TODO
+/*
 
+ ---- Ограничитель количества страниц
+ ---- Мгновенное изменение данных в форме или же автоматический перезапуск
+ ---- При пустой форме данных отображать страницу настроек с блокировкой остальных кнопок
+ ---- Лист для отображения загруженных файлов в письмо
+ ---- Сделать альтернативу textbox для чтения сообщения
+ ---- Создать возможность скачивания прикрепляемых файлов
+ ---- Добавить документацию
+ 
+ */
 
 namespace MailApp
 {
     public partial class Form1 : Form
     {
-        private Controller controller = new Controller();
+        private readonly Controller controller = new Controller();
         private List<string> Path = new List<string>();
+        private List<int> Pages = new List<int>();
 
         private void changePage_1(bool change)
         {
@@ -54,6 +66,8 @@ namespace MailApp
         private void chagePage_3(bool change)
         {
             dataGridView1.Visible = change;
+            comboBox2.Visible = change;
+            label11.Visible = change;
         }
         private void chagePage_4(bool change)
         {
@@ -70,6 +84,7 @@ namespace MailApp
         {
             InitializeComponent();
             GetData();
+            Update_Combobox();
         }
         private async void GetData()
         {
@@ -83,9 +98,9 @@ namespace MailApp
             dataGridView1.Columns.Add("", "Имя отправителя");
             dataGridView1.Columns.Add("", "Тема");
         }
-        private async void GetMessages()
+        private void GetMessages(int Index)
         {
-            var messages = await controller.getInbox();
+            var messages = controller.getInbox(Index);
             new Thread(() =>
             {
                 Invoke((Action)(() =>
@@ -105,11 +120,11 @@ namespace MailApp
             if (controller.checkUser())
             {
                 controller.sendMessage(textBox2.Text, textBox3.Text, textBox1.Text, Path, checkBox1.Checked);
-                MessageBox.Show("Письмо отправлено!");
+                MessageBox.Show("Письмо отправлено!", "Успешно!");
             }
             else
             {
-                MessageBox.Show("Ошибка!\nНевозможно отправить письмо\nВы не заполнили свои данные!");
+                MessageBox.Show("Ошибка!\nНевозможно отправить письмо\nВы не заполнили свои данные!", "Ошибка!");
             }
         }
 
@@ -136,11 +151,11 @@ namespace MailApp
             {
                 if(textBox5.Text != controller.getIncodeUserPassword())
                     controller.saveUserData(textBox4.Text, textBox5.Text, textBox6.Text);
-                    MessageBox.Show("Данные изменены!");
+                    MessageBox.Show("Данные изменены!", "Успешно!");
             }
             else
             {
-                MessageBox.Show("Ошибка!\nНе все данные заполнены");
+                MessageBox.Show("Ошибка!\nНе все данные заполнены", "Ошибка!");
             }
         }
 
@@ -171,8 +186,6 @@ namespace MailApp
                 textBox5.Text = controller.getIncodeUserPassword();
         }
 
-
-
         private void dataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             changePage_1(false);
@@ -181,17 +194,17 @@ namespace MailApp
             chagePage_4(true);
             textBox2.Text = dataGridView1[0, e.RowIndex].Value.ToString();
             textBox3.Text = dataGridView1[2, e.RowIndex].Value.ToString();
-            textBox1.Text = controller.getMessage(e.RowIndex);
+            textBox1.Text = controller.getMessage(comboBox2.SelectedIndex+1,e.RowIndex);
         }
 
-        private async void button6_Click(object sender, EventArgs e)
+        private void button6_Click(object sender, EventArgs e)
         {
             changePage_1(false);
             changePage_2(false);
             chagePage_3(true);
             chagePage_4(false);
             UpdateGrid();
-            await Task.Run(() => GetMessages());
+            GetMessages(1);
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -210,16 +223,46 @@ namespace MailApp
             chagePage_3(false);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-        }
-
         private void button8_Click(object sender, EventArgs e)
         {
             changePage_1(false);
             changePage_2(false);
             chagePage_3(true);
             chagePage_4(false);
+        }
+
+        private void Update_Combobox()
+        {
+            Thread thread = new Thread(() =>
+            {
+                while (true)
+                {
+                    int page = controller.GetPages();
+                    if (Pages.IndexOf(page) < 0 && page != 0)
+                    {
+                        Pages.Add(page);
+                        try
+                        {
+                            Invoke((Action)(() =>
+                            {
+                                if (page == 1)
+                                    button6.Enabled = true;
+                                comboBox2.Items.Add(page);
+                            }));
+                        }
+                        catch
+                        {
+                            break;
+                        }
+                    }
+                }
+            });
+            thread.Start();
+        }
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateGrid();
+            GetMessages(comboBox2.SelectedIndex + 1);
         }
     }
 }

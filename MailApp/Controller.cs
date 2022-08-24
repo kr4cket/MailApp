@@ -104,19 +104,20 @@ namespace MailApp
         }
         
         //Work with View
-        public async Task<List<string>> getInbox()
+        public List<string> getInbox(int Index)
         {
             List<string> Data = new List<string>();
-            _messages = await _mailGetter.openInbox();
-            foreach(Email message in _messages)
+            var messages = _mailGetter.GetPage(Index);
+            foreach(Email message in messages)
             {
                 Data.Add($"{message.FromEmail}/{message.FromName}/{message.Subject}");
             }
             return Data;
         }
-        public string getMessage(int index)
+        public string getMessage(int indexPage, int indexMessage)
         {
-            return _messages[index].MessageText;
+            //добавить индекс страницы
+            return _mailGetter.GetMessage(indexPage, indexMessage);
         }
         public string getIncodeUserPassword()
         {
@@ -147,6 +148,19 @@ namespace MailApp
         {
             return _owner.Login;
         }
-
+        public int GetPages()
+        {
+            try
+            {
+                if (_mailGetter is null)
+                    return 0;
+                else
+                    return _mailGetter.GetPages();
+            }
+            catch
+            {
+                return 0;
+            }
+        }
     }
 }
